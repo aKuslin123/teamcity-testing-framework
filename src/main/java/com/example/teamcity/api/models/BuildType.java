@@ -1,5 +1,8 @@
 package com.example.teamcity.api.models;
 
+import com.example.teamcity.api.annotations.Optional;
+import com.example.teamcity.api.annotations.Parameterizable;
+import com.example.teamcity.api.annotations.Random;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

@@ -6,6 +6,7 @@ import com.example.teamcity.api.requests.checked.CheckedBase;
 import com.example.teamcity.api.spec.Specifications;
 import org.testng.annotations.Test;
 
+import static com.example.teamcity.api.generators.TestDataGenerator.generate;
 import static io.qameta.allure.Allure.step;
 
 @Test(groups = {"Regression"})
@@ -13,10 +14,7 @@ public class BuildTypeTest extends BaseApiTest {
     @Test(description = "User should be able to create build type", groups = {"Positive", "CRUD"})
     public void userCreatesBuildTypeTest() {
         step("Create user", () -> {
-            var user = User.builder()
-                    .username("name")
-                    .password("password")
-                    .build();
+            var user = generate(User.class);
 
             var requester = new CheckedBase<User>(Specifications.superUserAuth(), Endpoint.USERS);
 
