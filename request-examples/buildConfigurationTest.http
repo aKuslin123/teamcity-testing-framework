@@ -73,3 +73,62 @@ GET http://172.30.128.1:8111/app/rest/builds/id:102
 Content-Type: application/json
 Accept: application/json
 X-TC-CSRF-Token: 27fb0df6-7793-4df2-941c-68af372d46d3
+
+### 5. Get auth settings
+GET http://172.30.128.1:8111/app/rest/server/authSettings
+Content-Type: application/json
+Accept: application/json
+X-TC-CSRF-Token: efaac190-12b6-4675-81ce-0ce985c5937b
+
+### 6. Set auth settings
+PUT http://172.30.128.1:8111/app/rest/server/authSettings
+Content-Type: application/json
+Accept: application/json
+X-TC-CSRF-Token: efaac190-12b6-4675-81ce-0ce985c5937b
+
+{
+  "allowGuest": false,
+  "guestUsername": "guest",
+  "welcomeText": "",
+  "collapseLoginForm": false,
+  "perProjectPermissions": true,
+  "emailVerification": false,
+  "modules": {
+    "module": [
+      {
+        "name": "Default",
+        "properties": {
+          "property": [
+            {
+              "name": "usersCanResetOwnPasswords",
+              "value": "true"
+            },
+            {
+              "name": "usersCanChangeOwnPasswords",
+              "value": "true"
+            },
+            {
+              "name": "freeRegistrationAllowed",
+              "value": "false"
+            }
+          ],
+          "count": 3
+        }
+      },
+      {
+        "name": "Token-Auth",
+        "properties": {
+          "property": [],
+          "count": 0
+        }
+      },
+      {
+        "name": "HTTP-Basic",
+        "properties": {
+          "property": [],
+          "count": 0
+        }
+      }
+    ]
+  }
+}
