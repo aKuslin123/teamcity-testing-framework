@@ -43,7 +43,8 @@ public class BuildTypeTest extends BaseApiTest {
         new UncheckedBase(Specifications.authSpec(testData.getUser()), BUILD_TYPES)
                 .create(buildTypeWithTheSameId)
                 .then().assertThat().statusCode(HttpStatus.SC_BAD_REQUEST)
-                .body(Matchers.containsString("The build configuration / template ID \"%s\" is already used by another configuration or template".formatted(testData.getBuildType().getId())));
+                .body(Matchers.containsString("The build configuration / template ID \"%s\" is already used by another configuration or template"
+                        .formatted(testData.getBuildType().getId())));
     }
 
     @Test(description = "Project admin should be able to create build type for their project", groups = {"Positive", "Roles"})
@@ -61,54 +62,33 @@ public class BuildTypeTest extends BaseApiTest {
         var userCheckRequests = new CheckedRequests(Specifications.authSpec(testData.getUser()));
 
         userCheckRequests.getRequest(BUILD_TYPES).create(testData.getBuildType());
-
-        step("Check buildType was created successfully");
-        //проверяем просто что создан успешно, потому что тут тест на права и роли
-        //https://www.youtube.com/watch?v=NeH_WEWP-VI&ab_channel=AlexPshe 16:00
     }
 
     @Test(description = "Project admin should not be able to create build type for not their project", groups = {"Negative", "Roles"})
     public void projectAdminCreatesBuildTypeForAnotherUserProjectTest() {
         var user1 = testData.getUser();
         var project1 = testData.getProject();
-        System.out.println("user1 name = " + user1.getUsername());
-        System.out.println("project1 name = " + project1.getName());
 
         superUserCheckRequests.getRequest(PROJECTS).create(project1);
 
         user1.setRoles(generate(Roles.class, "PROJECT_ADMIN", "p:" + project1.getId()));
 
         superUserCheckRequests.<User>getRequest(USERS).create(user1);
-        //мне вообще тут не нужно делать билдтайпы, только в конце вторым юзером, создать билдтайп для 1 юзера
-        //var userCheckRequests = new CheckedRequests(Specifications.authSpec(user1));
-        //userCheckRequests.getRequest(BUILD_TYPES).create(testData.getBuildType());
 
         var testData2 = generate();
         var user2 = testData2.getUser();
         var project2 = testData2.getProject();
-        System.out.println("user2 name = " + user2.getUsername());
-        System.out.println("project2 name = " + project2.getName());
 
         superUserCheckRequests.getRequest(PROJECTS).create(project2);
 
         user2.setRoles(generate(Roles.class, "PROJECT_ADMIN", "p:" + project2.getId()));
 
         superUserCheckRequests.<User>getRequest(USERS).create(user2);
-        var user2CheckRequests = new CheckedRequests(Specifications.authSpec(user2));
 
-        user2CheckRequests.getRequest(BUILD_TYPES).create(testData.getBuildType());
-
-
-
-        step("Create user1");
-        step("Create project1");
-        step("Grant user1 PROJECT_ADMIN role in project1");
-
-        step("Create user2");
-        step("Create project2");
-        step("Grant user2 PROJECT_ADMIN role in project2");
-
-        step("Create buildType for project1 by user2");
-        step("Check buildType was not created with forbidden code");
+        new UncheckedBase(Specifications.authSpec(user2), BUILD_TYPES)
+                .create(testData.getBuildType())
+                .then().assertThat().statusCode(HttpStatus.SC_FORBIDDEN)
+                .body(Matchers.containsString("You do not have enough permissions to edit project with id: " + project1.getId()))
+                .body(Matchers.containsString("Access denied. Check the user has enough permissions to perform the operation."));
     }
 }
