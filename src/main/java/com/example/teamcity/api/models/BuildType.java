@@ -19,6 +19,6 @@ public class BuildType extends BaseModel {
     private String id;
     @Random
     private String name;
-    //private Project project;
+    private Project project;
     private Steps steps;
 }
