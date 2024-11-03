@@ -25,7 +25,7 @@ public class CreateBuildConfigurationTest extends BaseUiTest {
         //создаю юзера и логинюсь
         loginAs(testData.getUser());
 
-        //создаю проект без билд конфигурации
+        //создаю проект
         var userCheckRequests = new CheckedRequests(authSpec(testData.getUser()));
         userCheckRequests.<Project>getRequest(PROJECTS).create(testData.getProject());
 
@@ -47,5 +47,31 @@ public class CreateBuildConfigurationTest extends BaseUiTest {
         EditProjectPage.open(testData.getProject().getId())
                 .checkSuccessfulMessage()
                 .buildTypeName.shouldHave(Condition.exactText(testData.getBuildType().getName()));
+    }
+
+    @Test(description = "User should not be able to create build configuration without name", groups = {"Negative"})
+    public void userCreatesBuildConfigurationWithoutName() {
+
+        //оставил коменты, подумал так будет понятнее, что хотел сделать
+        //создаю юзера и логинюсь
+        loginAs(testData.getUser());
+
+        //создаю проект
+        var userCheckRequests = new CheckedRequests(authSpec(testData.getUser()));
+        userCheckRequests.<Project>getRequest(PROJECTS).create(testData.getProject());
+
+        //создаю билд конфигурацию в юай с пустым именем и проверяю, что есть ошибка валидации
+        CreateBuildConfigurationPage.open(testData.getProject().getId())
+                .createForm(REPO_URL)
+                .setupBuildConfiguration("")
+                .checkValidationError();
+
+        //проверка состояния апи, у созданного проекта buildTypes.count = 0
+        var createdProject = userCheckRequests.<Project>getRequest(Endpoint.PROJECTS)
+                .read("count:" + testData.getProject().getBuildTypes().getCount());
+        softy.assertEquals(
+                testData.getProject().getBuildTypes(),
+                createdProject.getBuildTypes(), "BuildTypes count is not null"
+        );
     }
 }

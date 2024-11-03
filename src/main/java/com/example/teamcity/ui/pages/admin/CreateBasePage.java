@@ -15,6 +15,14 @@ public abstract class CreateBasePage extends BasePage {
     protected SelenideElement buildTypeNameInput = $("#buildTypeName");
     protected SelenideElement connectionSuccessfulMessage = $(".connectionSuccessful");
 
+    protected SelenideElement validationErrorMessage(String entity) {
+        return $(String.format("span#error_%s", entity));
+    }
+
+    protected void baseCheckValidationError(String entity, String message) {
+        validationErrorMessage(entity).shouldHave(Condition.text(message));
+    }
+
     protected void baseCreateForm(String url) {
         urlInput.val(url);
         submitButton.click();
