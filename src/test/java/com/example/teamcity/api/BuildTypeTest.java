@@ -1,6 +1,9 @@
-package com.example.teamcity;
+package com.example.teamcity.api;
 
-import com.example.teamcity.api.models.*;
+import com.example.teamcity.api.models.BuildType;
+import com.example.teamcity.api.models.Project;
+import com.example.teamcity.api.models.Roles;
+import com.example.teamcity.api.models.User;
 import com.example.teamcity.api.requests.CheckedRequests;
 import com.example.teamcity.api.requests.unchecked.UncheckedBase;
 import com.example.teamcity.api.spec.Specifications;
@@ -11,6 +14,7 @@ import org.testng.annotations.Test;
 import java.util.Arrays;
 
 import static com.example.teamcity.api.enums.Endpoint.*;
+import static com.example.teamcity.api.enums.Role.PROJECT_ADMIN;
 import static com.example.teamcity.api.generators.TestDataGenerator.generate;
 import static io.qameta.allure.Allure.step;
 
@@ -25,7 +29,7 @@ public class BuildTypeTest extends BaseApiTest {
 
         userCheckRequests.getRequest(BUILD_TYPES).create(testData.getBuildType());
 
-        var createdBuildType = userCheckRequests.<BuildType>getRequest(BUILD_TYPES).read(testData.getBuildType().getId());
+        var createdBuildType = userCheckRequests.<BuildType>getRequest(BUILD_TYPES).read("id:" + testData.getBuildType().getId());
 
         softy.assertEquals(testData.getBuildType().getName(), createdBuildType.getName(), "Build type name is not correct");
     }
@@ -56,7 +60,7 @@ public class BuildTypeTest extends BaseApiTest {
 
         superUserCheckRequests.getRequest(PROJECTS).create(testData.getProject());
 
-        testData.getUser().setRoles(generate(Roles.class, "PROJECT_ADMIN", "p:" + testData.getProject().getId()));
+        testData.getUser().setRoles(generate(Roles.class, PROJECT_ADMIN.name(), "p:" + testData.getProject().getId()));
 
         superUserCheckRequests.<User>getRequest(USERS).create(testData.getUser());
         var userCheckRequests = new CheckedRequests(Specifications.authSpec(testData.getUser()));
@@ -66,29 +70,29 @@ public class BuildTypeTest extends BaseApiTest {
 
     @Test(description = "Project admin should not be able to create build type for not their project", groups = {"Negative", "Roles"})
     public void projectAdminCreatesBuildTypeForAnotherUserProjectTest() {
-        var user1 = testData.getUser();
-        var project1 = testData.getProject();
+        var firstUser = testData.getUser();
+        var firstProject = testData.getProject();
 
-        superUserCheckRequests.getRequest(PROJECTS).create(project1);
+        superUserCheckRequests.getRequest(PROJECTS).create(firstProject);
 
-        user1.setRoles(generate(Roles.class, "PROJECT_ADMIN", "p:" + project1.getId()));
+        firstUser.setRoles(generate(Roles.class, PROJECT_ADMIN.name(), "p:" + firstProject.getId()));
 
-        superUserCheckRequests.<User>getRequest(USERS).create(user1);
+        superUserCheckRequests.<User>getRequest(USERS).create(firstUser);
 
-        var testData2 = generate();
-        var user2 = testData2.getUser();
-        var project2 = testData2.getProject();
+        var secondTestData = generate();
+        var secondUser = secondTestData.getUser();
+        var secondProject = secondTestData.getProject();
 
-        superUserCheckRequests.getRequest(PROJECTS).create(project2);
+        superUserCheckRequests.getRequest(PROJECTS).create(secondProject);
 
-        user2.setRoles(generate(Roles.class, "PROJECT_ADMIN", "p:" + project2.getId()));
+        secondUser.setRoles(generate(Roles.class, PROJECT_ADMIN.name(), "p:" + secondProject.getId()));
 
-        superUserCheckRequests.<User>getRequest(USERS).create(user2);
+        superUserCheckRequests.<User>getRequest(USERS).create(secondUser);
 
-        new UncheckedBase(Specifications.authSpec(user2), BUILD_TYPES)
+        new UncheckedBase(Specifications.authSpec(secondUser), BUILD_TYPES)
                 .create(testData.getBuildType())
                 .then().assertThat().statusCode(HttpStatus.SC_FORBIDDEN)
-                .body(Matchers.containsString("You do not have enough permissions to edit project with id: " + project1.getId()))
+                .body(Matchers.containsString("You do not have enough permissions to edit project with id: " + firstProject.getId()))
                 .body(Matchers.containsString("Access denied. Check the user has enough permissions to perform the operation."));
     }
 }
