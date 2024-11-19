@@ -20,6 +20,10 @@ jobs:
           java-version: '17'
           distribution: 'zulu'
 
+      - name: Grant execution permissions to mvnw
+        shell: bash
+        run: chmod +x ./mvnw
+
       - name: Validate Checkstyle
         run: ./mvnw validate
 
@@ -31,6 +35,10 @@ jobs:
 
       - name: TeamCity Setup
         uses: ./.github/actions/teamcity-setup
+
+      - name: Grant execution permissions to mvnw
+        shell: bash
+        run: chmod +x ./mvnw
 
       - name: Run tests
         continue-on-error: true
