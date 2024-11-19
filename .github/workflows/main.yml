@@ -3,11 +3,11 @@ name: TeamCity deployment
 on: push
 
 jobs:
-  # Собирается бэкенд и деплоится на стейдж/review app
+  # Собирается бекенд и деплоится на стейдж/review app
   backend:
     uses: ./.github/workflows/backend-stage.yml
 
-  # Собирается фронтенд и деплоится на стейдж/review app
+  # Собирается бекенд и деплоится на стейдж/review app
   frontend:
     uses: ./.github/workflows/frontend-stage.yml
 
