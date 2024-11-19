@@ -2,11 +2,11 @@ name: Run tests
 
 on:
   workflow_call:
-      inputs:
-        package:
-          description: api | ui
-          required: true
-          type: string
+    inputs:
+      package:
+        description: api | ui
+        required: true
+        type: string
 
 jobs:
   validate-checkstyle:
@@ -23,16 +23,16 @@ jobs:
       - name: Validate Checkstyle
         run: ./mvnw validate
 
-    run-tests:
-      needs: validate-checkstyle
-      runs-on: ubuntu-latest
-      steps:
-        - uses: actions/checkout@v4
+  run-tests:
+    needs: validate-checkstyle
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
 
-        - name: TeamCity Setup
-          uses: ./.github/actions/teamcity-setup
+      - name: TeamCity Setup
+        uses: ./.github/actions/teamcity-setup
 
-        - name: Run tests
-          continue-on-error: true
-          # Указываем группу, чтобы не запустить тесты, связанные с сетапом TeamCity
-          run: ./mvnw test -Dtest='com.example.teamcity.${{ inputs.package }}.**' -Dgroups=Regression
+      - name: Run tests
+        continue-on-error: true
+        # Указываем группу, чтобы не запустить тесты, связанные с сетапом TeamCity
+        run: ./mvnw test -Dtest='com.example.teamcity.${{ inputs.package }}.**' -Dgroups=Regression
