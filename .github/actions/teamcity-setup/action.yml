@@ -12,7 +12,7 @@ runs:
     # По умолчанию в ubuntu отсутствует команда ifconfig
     - name: Install ifconfig
       shell: bash
-      run: sudo apt-get update && apt-get install -y net-tools
+      run: sudo apt-get update && sudo apt-get install -y net-tools
 
     - name: Set up host environment variable
       shell: bash
