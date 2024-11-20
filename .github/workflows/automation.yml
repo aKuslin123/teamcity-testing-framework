@@ -46,7 +46,7 @@ jobs:
         run: ./mvnw test -Dtest='com.example.teamcity.${{ inputs.package }}.**' -Dgroups=Regression
 
       - name: Grant execute permissions for swagger-coverage-commandline
-        run: chmod +x .swagger-coverage-commandline/
+        run: chmod +x .swagger-coverage-commandline/*
 
         # Создаем репорт с покрытием API тестов, основанном на Swagger.
         # Документация: https://github.com/viclovsky/swagger-coverage
