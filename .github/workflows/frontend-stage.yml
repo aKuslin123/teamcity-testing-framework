@@ -2,7 +2,7 @@ name: Deploy frontend
 
 on: workflow_call
 
-# Это лишь примерные степы, как может выглядеть пайплайн бэкенда
+# Это лишь примерные степы, как может выглядеть пайплайн фронтенда
 jobs:
   test:
     runs-on: ubuntu-latest
