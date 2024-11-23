@@ -1,6 +1,7 @@
 package com.example.teamcity.ui.pages.admin;
 
 import com.codeborne.selenide.Selenide;
+import io.qameta.allure.Step;
 
 public class CreateBuildConfigurationPage extends CreateBasePage {
     private static final String PROJECT_SHOW_MODE = "createBuildTypeMenu";
@@ -15,6 +16,7 @@ public class CreateBuildConfigurationPage extends CreateBasePage {
         return this;
     }
 
+    @Step("Создаю билд конфигурацию в юай")
     public CreateBuildConfigurationPage setupBuildConfiguration(String buildConfigurationName) {
         buildTypeNameInput.val(buildConfigurationName);
         submitButton.click();
