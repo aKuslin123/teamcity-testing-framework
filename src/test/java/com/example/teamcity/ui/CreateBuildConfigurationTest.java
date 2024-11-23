@@ -37,7 +37,8 @@ public class CreateBuildConfigurationTest extends BaseUiTest {
         //создаю билд конфигурацию в юай
         CreateBuildConfigurationPage.open(testData.getProject().getId())
                 .createForm(REPO_URL)
-                .setupBuildConfiguration(testData.getBuildType().getName());
+                .setupBuildConfiguration(testData.getBuildType().getName())
+                .checkSuccessfulMessage();
 
         //проверка состояния апи
         var createdBuildType = userCheckRequests.<BuildType>getRequest(BUILD_TYPES).read("name:" + testData.getBuildType().getName());

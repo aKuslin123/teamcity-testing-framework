@@ -3,6 +3,7 @@ package com.example.teamcity.ui.pages.admin;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
+import com.example.teamcity.ui.pages.EditProjectPage;
 import io.qameta.allure.Step;
 
 import static com.codeborne.selenide.Selenide.$;
@@ -25,7 +26,11 @@ public class CreateBuildConfigurationPage extends CreateBasePage {
     public CreateBuildConfigurationPage setupBuildConfiguration(String buildConfigurationName) {
         buildTypeNameInput.val(buildConfigurationName);
         submitButton.click();
-        successfulMessage.shouldBe(Condition.visible, BASE_WAITING);
+        return this;
+    }
+
+    public CreateBuildConfigurationPage checkSuccessfulMessage() {
+        successfulMessage.should(Condition.appear, BASE_WAITING);
         return this;
     }
 
