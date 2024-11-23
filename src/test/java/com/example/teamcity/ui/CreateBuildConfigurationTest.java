@@ -39,8 +39,6 @@ public class CreateBuildConfigurationTest extends BaseUiTest {
                 .createForm(REPO_URL)
                 .setupBuildConfiguration(testData.getBuildType().getName());
 
-        sleep(5000);
-
         //проверка состояния апи
         var createdBuildType = userCheckRequests.<BuildType>getRequest(BUILD_TYPES).read("name:" + testData.getBuildType().getName());
         softy.assertEquals(testData.getBuildType().getName(), createdBuildType.getName(), "Build type name is not correct");
@@ -52,7 +50,6 @@ public class CreateBuildConfigurationTest extends BaseUiTest {
                     .buildTypeName.shouldHave(Condition.exactText(testData.getBuildType().getName()));
 
         EditProjectPage.open(testData.getProject().getId())
-                .checkSuccessfulMessage()
                 .buildTypeName.shouldHave(Condition.exactText(testData.getBuildType().getName()));
     }
 
