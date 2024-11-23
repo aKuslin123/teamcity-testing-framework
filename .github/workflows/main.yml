@@ -29,6 +29,7 @@ jobs:
     needs: [automation-api, automation-ui]
     runs-on: ubuntu-latest
     environment: 'prod'
+    steps:
       - name: Approve backend and frontend to production
         run: echo Approved to production
 
