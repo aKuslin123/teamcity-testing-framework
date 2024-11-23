@@ -92,17 +92,3 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_branch: gh-pages
           publish_dir: allure-history
-
-      # Хочу посмотреть как будет отрабатывать рабочий курл с : или 3А
-  test_request:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Make a GET request with colon in URL
-        run: |
-          URL="http://admin:admin@172.30.128.1:8111/app/rest/buildTypes/name:Build"
-          echo "Making request to URL: $URL"
-          curl -v "$URL"
