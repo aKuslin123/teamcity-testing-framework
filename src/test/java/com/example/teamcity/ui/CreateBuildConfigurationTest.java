@@ -35,30 +35,12 @@ public class CreateBuildConfigurationTest extends BaseUiTest {
         userCheckRequests.<Project>getRequest(PROJECTS).create(testData.getProject());
 
         //создаю билд конфигурацию в юай
-
-        //
-        String buildTypeName = testData.getBuildType().getName();
-        String encodedBuildTypeName = null;
-        try {
-            encodedBuildTypeName = URLEncoder.encode(buildTypeName, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            // Это исключение вряд ли возникнет, так как UTF-8 поддерживается по умолчанию
-            e.printStackTrace();
-            // Можешь обработать ошибку или продолжить выполнение с каким-то дефолтным значением
-        }
-        //
-
         CreateBuildConfigurationPage.open(testData.getProject().getId())
-                .createForm(REPO_URL);
-
-        sleep(5000);
-
-
-        CreateBuildConfigurationPage.open(testData.getProject().getId())
+                .createForm(REPO_URL)
                 .setupBuildConfiguration(testData.getBuildType().getName());
 
         //проверка состояния апи
-        var createdBuildType = userCheckRequests.<BuildType>getRequest(BUILD_TYPES).read("name:" + testData.getBuildType().getName());
+        var createdBuildType = userCheckRequests.<BuildType>getRequest(BUILD_TYPES).read("name%3A" + testData.getBuildType().getName());
         softy.assertEquals(testData.getBuildType().getName(), createdBuildType.getName(), "Build type name is not correct");
 
         //проверка состояния юай
