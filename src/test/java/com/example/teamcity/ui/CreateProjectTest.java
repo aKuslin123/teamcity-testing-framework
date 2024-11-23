@@ -70,3 +70,4 @@ public class CreateProjectTest extends BaseUiTest {
         step("Check that error appears 'Project name must not be empty'");
     }
 }
+
