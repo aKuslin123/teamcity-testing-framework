@@ -38,6 +38,12 @@ public class CreateBuildConfigurationTest extends BaseUiTest {
         CreateBuildConfigurationPage.open(testData.getProject().getId())
                 .createForm(REPO_URL)
                 .setupBuildConfiguration(testData.getBuildType().getName())
+
+                /*
+                жду пока появится сообщение о том, что билдтайп успешно создан,
+                т.к иначе, если тесты идут в CI, гет запрос на билдтайп успевает уйти раньше, чем он создастся в юай
+                и в итоге ошибка
+                 */
                 .checkSuccessfulMessage();
 
         //проверка состояния апи
