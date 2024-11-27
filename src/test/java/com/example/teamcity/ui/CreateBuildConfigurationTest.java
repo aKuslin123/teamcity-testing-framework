@@ -10,6 +10,11 @@ import com.example.teamcity.ui.pages.ProjectPage;
 import com.example.teamcity.ui.pages.admin.CreateBuildConfigurationPage;
 import org.testng.annotations.Test;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+
+import static com.codeborne.selenide.Selenide.sleep;
 import static com.example.teamcity.api.enums.Endpoint.BUILD_TYPES;
 import static com.example.teamcity.api.enums.Endpoint.PROJECTS;
 import static com.example.teamcity.api.spec.Specifications.authSpec;
@@ -32,7 +37,14 @@ public class CreateBuildConfigurationTest extends BaseUiTest {
         //создаю билд конфигурацию в юай
         CreateBuildConfigurationPage.open(testData.getProject().getId())
                 .createForm(REPO_URL)
-                .setupBuildConfiguration(testData.getBuildType().getName());
+                .setupBuildConfiguration(testData.getBuildType().getName())
+
+                /*
+                жду пока появится сообщение о том, что билдтайп успешно создан,
+                т.к иначе, если тесты идут в CI, гет запрос на билдтайп успевает уйти раньше, чем он создастся в юай
+                и в итоге ошибка
+                 */
+                .checkSuccessfulMessage();
 
         //проверка состояния апи
         var createdBuildType = userCheckRequests.<BuildType>getRequest(BUILD_TYPES).read("name:" + testData.getBuildType().getName());
@@ -42,10 +54,9 @@ public class CreateBuildConfigurationTest extends BaseUiTest {
         var createdProject = superUserCheckRequests.<Project>getRequest(Endpoint.PROJECTS).read("name:" + testData.getProject().getName());
         softy.assertNotNull(createdProject);
         ProjectPage.open(createdProject.getId())
-                .buildTypeName.shouldHave(Condition.exactText(testData.getBuildType().getName()));
+                    .buildTypeName.shouldHave(Condition.exactText(testData.getBuildType().getName()));
 
         EditProjectPage.open(testData.getProject().getId())
-                .checkSuccessfulMessage()
                 .buildTypeName.shouldHave(Condition.exactText(testData.getBuildType().getName()));
     }
 
